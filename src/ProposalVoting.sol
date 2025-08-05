@@ -258,6 +258,15 @@ contract ProposalVoting is ReentrancyGuard, AutomationCompatibleInterface {
     }
 
     /**
+     * @notice Checks if the caller has voted on a specific proposal.
+     * @param proposalId The ID of the proposal to check.
+     * @return True if the caller has voted on the proposal, false otherwise.
+     */
+    function checkVoted(uint256 proposalId) external view returns (bool) {
+        return s_voters[msg.sender][proposalId];
+    }
+
+    /**
      * @notice Returns the total number of proposals that are currently pending.
      * @return The total number of pending proposals.
      */

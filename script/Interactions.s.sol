@@ -30,11 +30,16 @@ contract CreateProposal is Script {
 }
 
 contract VoteProposal is Script {
-    function voteOnProposal(address proposalVoting, uint256 proposalId, bool support, HelperConfig.NetworkConfig memory config) public {
+    function voteOnProposal(
+        address proposalVoting,
+        uint256 proposalId,
+        bool support,
+        HelperConfig.NetworkConfig memory config
+    ) public {
         vm.startBroadcast(config.account);
 
         ProposalVoting voting = ProposalVoting(proposalVoting);
-        
+
         // Vote on the proposal
         voting.vote(proposalId, support);
 
@@ -45,7 +50,7 @@ contract VoteProposal is Script {
         HelperConfig helperConfig = new HelperConfig();
         HelperConfig.NetworkConfig memory config = helperConfig.getConfig();
         address mostRecentlyDeployed = DevOpsTools.get_most_recent_deployment("ProposalVoting", block.chainid);
-        
+
         // Assuming proposalId is known or fetched from somewhere
         uint256 proposalId = 0; // Replace with actual proposal ID
         bool support = true; // Replace with actual vote choice
@@ -59,7 +64,7 @@ contract GetProposals is Script {
         vm.startBroadcast(config.account);
 
         ProposalVoting voting = ProposalVoting(proposalVoting);
-        
+
         // Fetch all proposals
         ProposalVoting.Proposal[] memory proposals = voting.getProposals();
 
@@ -71,10 +76,10 @@ contract GetProposals is Script {
             console.log("Votes For:", proposals[i].votesFor);
             console.log("Votes Against:", proposals[i].votesAgainst);
             console.log(
-                "Status:", 
+                "Status:",
                 proposals[i].status == ProposalVoting.ProposalStatus.PENDING
-                    ? "Pending" : proposals[i].status == ProposalVoting.ProposalStatus.APPROVED
-                    ? "Approved" : "Rejected"
+                    ? "Pending"
+                    : proposals[i].status == ProposalVoting.ProposalStatus.APPROVED ? "Approved" : "Rejected"
             );
         }
 
@@ -85,17 +90,50 @@ contract GetProposals is Script {
         HelperConfig helperConfig = new HelperConfig();
         HelperConfig.NetworkConfig memory config = helperConfig.getConfig();
         address mostRecentlyDeployed = DevOpsTools.get_most_recent_deployment("ProposalVoting", block.chainid);
-        
+
         getProposals(mostRecentlyDeployed, config);
     }
 }
 
-contract SetAutomationForwarder is Script {
-    function setAutomationForwarder(address proposalVoting, address automationForwarder, HelperConfig.NetworkConfig memory config) public {
+contract CheckVoted is Script {
+    function checkIfVoted(
+        address proposalVoting,
+        uint256 proposalId,
+        HelperConfig.NetworkConfig memory config
+    ) public {
         vm.startBroadcast(config.account);
 
         ProposalVoting voting = ProposalVoting(proposalVoting);
-        
+
+        // Check if the caller has voted on the proposal
+        bool hasVoted = voting.checkVoted(proposalId);
+        console.log("Has voted on proposal", proposalId, ":", hasVoted);
+
+        vm.stopBroadcast();
+    }
+
+    function run() external {
+        HelperConfig helperConfig = new HelperConfig();
+        HelperConfig.NetworkConfig memory config = helperConfig.getConfig();
+        address mostRecentlyDeployed = DevOpsTools.get_most_recent_deployment("ProposalVoting", block.chainid);
+
+        // Assuming proposalId is known or fetched from somewhere
+        uint256 proposalId = 0; // Replace with actual proposal ID
+
+        checkIfVoted(mostRecentlyDeployed, proposalId, config);
+    }
+}
+
+contract SetAutomationForwarder is Script {
+    function setAutomationForwarder(
+        address proposalVoting,
+        address automationForwarder,
+        HelperConfig.NetworkConfig memory config
+    ) public {
+        vm.startBroadcast(config.account);
+
+        ProposalVoting voting = ProposalVoting(proposalVoting);
+
         // Set the automation forwarder
         voting.setAutomationForwarder(automationForwarder);
 
@@ -106,7 +144,7 @@ contract SetAutomationForwarder is Script {
         HelperConfig helperConfig = new HelperConfig();
         HelperConfig.NetworkConfig memory config = helperConfig.getConfig();
         address mostRecentlyDeployed = DevOpsTools.get_most_recent_deployment("ProposalVoting", block.chainid);
-        
+
         // Assuming automationForwarder is known or fetched from somewhere
         address automationForwarder = 0xE45D97A9920B5564AE289EF173B1f3FFDE33BCa6; // Replace with actual forwarder address
 

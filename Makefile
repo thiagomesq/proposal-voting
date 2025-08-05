@@ -49,5 +49,8 @@ voteProposal:
 getProposals:
 	@forge script script/Interactions.s.sol:GetProposals $(NETWORK_ARGS)
 
+checkVoted:
+	@forge script script/Interactions.s.sol:CheckVoted $(NETWORK_ARGS)
+
 setAutomationForwarder:
 	@forge script script/Interactions.s.sol:SetAutomationForwarder $(NETWORK_ARGS)

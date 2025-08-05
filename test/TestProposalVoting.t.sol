@@ -192,6 +192,56 @@ contract TestProposalVoting is Test {
     }
 
     //////////////////////////////////////////////
+    // Tests for checkVoted
+    //////////////////////////////////////////////
+
+    function testCheckVotedReturnsTrueAfterVoting() public {
+        vm.prank(user1);
+        proposalVoting.createProposal(PROPOSAL_TITLE, PROPOSAL_DESCRIPTION);
+
+        vm.prank(user2);
+        proposalVoting.vote(0, true);
+
+        vm.prank(user2);
+        assertTrue(proposalVoting.checkVoted(0));
+    }
+
+    function testCheckVotedReturnsFalseBeforeVoting() public {
+        vm.prank(user1);
+        proposalVoting.createProposal(PROPOSAL_TITLE, PROPOSAL_DESCRIPTION);
+
+        vm.prank(user2);
+        assertFalse(proposalVoting.checkVoted(0));
+    }
+
+    function testCheckVotedIsPerUserAndProposal() public {
+        // user1 creates proposal 0
+        vm.prank(user1);
+        proposalVoting.createProposal("Proposal 0", "Desc 0");
+
+        // user1 creates proposal 1
+        vm.prank(user1);
+        proposalVoting.createProposal("Proposal 1", "Desc 1");
+
+        // user2 votes on proposal 0
+        vm.prank(user2);
+        proposalVoting.vote(0, true);
+
+        // Check that user2 has voted on proposal 0
+        vm.prank(user2);
+        assertTrue(proposalVoting.checkVoted(0));
+
+        // Check that user2 has NOT voted on proposal 1
+        vm.prank(user2);
+        assertFalse(proposalVoting.checkVoted(1));
+
+        // Check that user1 has NOT voted on proposal 0
+        vm.prank(user1);
+        assertFalse(proposalVoting.checkVoted(0));
+    }
+
+
+    //////////////////////////////////////////////
     // Tests for automation forwarder
     //////////////////////////////////////////////
 

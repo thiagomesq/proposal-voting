@@ -137,7 +137,19 @@ make getProposals
 make getProposals ARGS="--network amoy"
 ```
 
-**4. Set the Automation Forwarder Address**
+**4. Check if an Address has Voted**
+
+This command calls the `CheckVoted` script to verify if a specific address has already voted on a given proposal. You may need to configure the address and proposal ID in the [`script/Interactions.s.sol`](script/Interactions.s.sol) file.
+
+```bash
+# For local network
+make checkVoted
+
+# For the Amoy network
+make checkVoted ARGS="--network amoy"
+```
+
+**5. Set the Automation Forwarder Address**
 
 This command is used to configure the address of the contract that will have permission to call the `performUpkeep` function (usually a Chainlink Automation forwarder).
 
@@ -158,4 +170,4 @@ make setAutomationForwarder ARGS="--network amoy"
 
 ## License
 
-This project is licensed under the MIT
+This project is licensed under the MIT License.
